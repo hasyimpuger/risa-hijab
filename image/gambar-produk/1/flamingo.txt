@@ -1,0 +1,28 @@
+id : 001
+kategori : khimar
+nama : fatma
+harga : 93.000 
+diskon : 78.000
+deskripsi :
+Bahannya?
+Platinum Buble Crepe. Bahan ini bertexture jeruknya lembut, bikin bahan ini nyamaan banget dipakai. Bedanya dengan Cinderella apa? Bahan ini lebih ringan dan flowy bangeet dibanding dengan Cinderella ya ukh :)
+
+Kualitas jahitan?
+Jangan ditanya, karena kami jahit sangat rapih, jahitannya juga super kuat. Penjahit khusus butik juga. Mesinnya juga khusus, pakai mesin yang bisa jahit tepi super kecil jadi terlihat sangat rapih.
+
+Size pack SMALL (S)
+- Panjang Depan 38cm (Dagu kebawah)
+- Panjang Belakang 73cm
+.
+Size pack MEDIUM (M)
+- Panjang Depan 50cm (Dagu kebawah)
+- Panjang Belakang 85cm cm
+
+Size pack LARGE (L)
+- Panjang Depan 62cm (Dagu kebawah)
+- Panjang Belakang 97cm
+
+
+warna : flamingo
+ukuran : S, M, L
+stok : 50

@@ -1,0 +1,28 @@
+id : 007
+kategori : khimar
+nama : ghania
+harga : 93.000 
+diskon : 78.000
+deskripsi :
+Bahannya?
+Platinum Ceruti Ultimate Premium, Lembut dan membentuk layer dengan sempurna. Bahannya halus dan ringan. 
+
+Kualitas jahitan?
+Jangan ditanya, karena kami jahit sangat rapih, jahitannya juga super kuat. Penjahit khusus butik juga. Mesinnya juga khusus, pakai mesin yang bisa jahit tepi super kecil jadi terlihat sangat rapih
+
+Size pack SMALL (S)
+- Panjang Depan 38cm (Dagu kebawah)
+- Panjang Belakang 73cm
+.
+Size pack MEDIUM (M)
+- Panjang Depan 50cm (Dagu kebawah)
+- Panjang Belakang 85cm cm
+
+Size pack LARGE (L)
+- Panjang Depan 62cm (Dagu kebawah)
+- Panjang Belakang 97cm
+
+
+warna : mocca
+ukuran : S, M, L
+stok : 50
