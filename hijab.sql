@@ -90,9 +90,11 @@ create table pelanggan (
   password varchar2(20) not null
 );
 
-create table chart (
-  idChart number(10) primary key,
-  totalHarga number(10) not null
+create table cart (
+	idCart number(10) primary key,
+	idPelanggan number(10) not null,
+	totalHarga number(10) not null,
+	constraint fk_idPelanggan4 foreign key(idPelanggan) references pelanggan(idPelanggan) on delete cascade
 );
 
 create table orderProduk (
@@ -101,14 +103,14 @@ create table orderProduk (
   idKurir number(10) not null,
   idAlamat number(10) not null,
   idPelanggan number(10) not null,
-  idChart number(10) not null,
+  idCart number(10) not null,
   tglOrder date not null,
   totalOrder number(10) not null,
   constraint fk_idStatusOrder foreign key(idStatusOrder) references orderStatus(idStatusOrder) on delete cascade,
   constraint fk_idKurir1 foreign key(idKurir) references kurir(idKurir) on delete cascade,
   constraint fk_idAlamat1 foreign key(idAlamat) references alamat(idAlamat) on delete cascade,
   constraint fk_idPelanggan foreign key(idPelanggan) references pelanggan(idPelanggan) on delete cascade,
-  constraint fk_idChart foreign key(idChart) references chart(idChart) on delete cascade
+  constraint fk_idCart foreign key(idCart) references cart(idCart) on delete cascade
 );
 
 create table fotoProduk (
@@ -141,13 +143,13 @@ create table stok (
   constraint fk_idProduk1 foreign key(idProduk) references produk(idProduk) on delete cascade
 );
 
-create table chartItem (
-  idChartItem number(10) primary key,
-  idChart number(10) not null,
+create table cartItem (
+  idCartItem number(10) primary key,
+  idCart number(10) not null,
   idProduk number(10) not null,
   subTotalHarga number(10) not null,
   jumlahProduk number(10) not null,
-  constraint fk_idChart2 foreign key(idChart) references chart(idChart) on delete cascade,
+  constraint fk_idCart2 foreign key(idCart) references cart(idCart) on delete cascade,
   constraint fk_idProduk2 foreign key(idProduk) references produk(idProduk) on delete cascade
 );
 
@@ -163,10 +165,10 @@ create sequence seq_idKodePos increment by 1;
 create sequence seq_idAlamat increment by 1;
 create sequence seq_idStatusOrder increment by 1;
 create sequence seq_idPelanggan increment by 1;
-create sequence seq_idChart increment by 1;
+create sequence seq_idCart increment by 1;
 create sequence seq_idOrder increment by 1;
 create sequence seq_idFotoProduk increment by 1;
 create sequence seq_idKategori increment by 1;
 create sequence seq_idProduk increment by 1;
-create sequence seq_idSt increment by 1;
-create sequence seq_idChartItem increment by 1;
+create sequence seq_idStok increment by 1;
+create sequence seq_idCartItem increment by 1;

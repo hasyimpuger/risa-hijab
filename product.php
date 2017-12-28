@@ -1,5 +1,6 @@
 <?php
   include_once 'koneksi.php';
+  session_start();
 ?>
 <!DOCTYPE html>
 <html>
@@ -38,10 +39,25 @@
             </div>
           </div>
           <div id="top-links" class="nav pull-right flip">
-            <ul>
-              <li><a href="login.php">Masuk</a></li>
-              <li><a href="register.php">Daftar</a></li>
-            </ul>
+            <?php
+              if(isset($_SESSION['pelanggan'])){
+                $pelanggan = "SELECT * FROM pelanggan WHERE IDPELANGGAN = $_SESSION[pelanggan]";
+                $data = oci_parse($koneksi, $pelanggan);
+                oci_execute($data);
+                $hasil = oci_fetch_assoc($data);
+                echo "<ul>
+                  <li><a>Halo, $hasil[NAMADEPAN]</a></li>
+                  <li><a href='logout.php'>KELUAR</a></li>
+                </ul>";
+
+              }else{
+                echo "<ul>
+                  <li><a href='login.php'>Masuk</a></li>
+                  <li><a href='register.php'>Daftar</a></li>
+                </ul>";
+              }
+            ?>
+
           </div>
         </div>
       </div>
@@ -199,6 +215,8 @@
               </div>
               <div class="col-sm-6">
                 <ul class="list-unstyled description">
+                  <form action="addtocart.php" method="post">
+                    <input type="hidden" name="idproduk" value="<?php echo $dataproduk['IDPRODUK']; ?>">
                   <li><b>Kode Produk :</b> <span itemprop="mpn"><?php echo $dataproduk['IDPRODUK']; ?></span></li>
                   <?php
                   $qStok = "SELECT * FROM stok where idProduk = $dataproduk[IDPRODUK]";
@@ -231,7 +249,7 @@
                   <h3 class="subtitle">Opsi yang tersedia</h3>
                   <div class="form-group required">
                     <label class="control-label">Ukuran</label>
-                    <select class="form-control" id="input-option">
+                    <select class="form-control" id="input-option" name="ukuran">
                       <option value="1" selected>S </option>
                       <option value="2">M </option>
                       <option value="3">L </option>
@@ -241,12 +259,19 @@
                     <div>
                       <div class="qty">
                         <label class="control-label" for="input-quantity">Jumlah</label>
-                        <input type="text" name="quantity" value="1" size="2" id="input-quantity" class="form-control" />
+                        <input type="text" name="jumlah" value="1" size="2" id="input-quantity" class="form-control" />
                         <a class="qtyBtn plus" href="javascript:void(0);">+</a><br />
                         <a class="qtyBtn mines" href="javascript:void(0);">-</a>
                         <div class="clear"></div>
                       </div>
-                      <button type="button" id="button-cart" class="btn btn-primary btn-lg" disabled>Add to Cart</button>
+                      <?php
+                        if(isset($_SESSION['pelanggan'])){
+                          echo "<input type='submit' id='button-cart' class='btn btn-primary btn-lg' value='Beli'>";
+                        }else{
+                          echo "<input type='submit' id='button-cart' class='btn btn-primary btn-lg' value='Beli'>";
+                        }
+                      ?>
+                    </form>
                     </div>
                   </div>
                 </div>

@@ -1,5 +1,6 @@
 <?php
   include_once 'koneksi.php';
+  session_start();
 ?>
 <!DOCTYPE html>
 <html>
@@ -40,10 +41,25 @@
             </div>
           </div>
           <div id="top-links" class="nav pull-right flip">
-            <ul>
-              <li><a href="login.php">Masuk</a></li>
-              <li><a href="register.php">Daftar</a></li>
-            </ul>
+            <?php
+              if(isset($_SESSION['pelanggan'])){
+                $pelanggan = "SELECT * FROM pelanggan WHERE IDPELANGGAN = $_SESSION[pelanggan]";
+                $data = oci_parse($koneksi, $pelanggan);
+                oci_execute($data);
+                $hasil = oci_fetch_assoc($data);
+                echo "<ul>
+                  <li><a>Halo, $hasil[NAMADEPAN]</a></li>
+                  <li><a href='logout.php'>KELUAR</a></li>
+                </ul>";
+
+              }else{
+                echo "<ul>
+                  <li><a href='login.php'>Masuk</a></li>
+                  <li><a href='register.php'>Daftar</a></li>
+                </ul>";
+              }
+            ?>
+
           </div>
         </div>
       </div>

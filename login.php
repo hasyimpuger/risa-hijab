@@ -190,6 +190,7 @@
               <a href="register.php" class="btn btn-primary">Daftar Sekarang</a> </div>
             <div class="col-sm-6">
               <h2 class="subtitle">Sudah punya akun ?</h2>
+                <form action="loginakun.php" method="post">
                 <div class="form-group">
                   <label class="control-label" for="input-email">E-Mail</label>
                   <input type="text" name="email" value="" placeholder="E-Mail" id="input-email" class="form-control" />
@@ -200,6 +201,7 @@
                   <br />
                   <a href="#"><strong>Lupa Password</strong></a></div>
                 <input type="submit" value="Login" class="btn btn-primary" />
+              </form>
             </div>
           </div>
         </div>

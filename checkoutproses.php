@@ -2,11 +2,13 @@
   include_once 'koneksi.php';
   session_start();
 
-  $namadpn = $_POST['namadepan'];
-  $namablkg = $_POST['namabelakang'];
-  $nohp = $_POST['nohp'];
-  $email = $_POST['email'];
-  $password = $_POST['password'];
+  $alamat = $_POST['alamat'];
+  $provinsi = $_POST['provinsi'];
+  $kota = $_POST['kota'];
+  $kecamatan = $_POST['kecamatan'];
+  $hp = $_POST['hp'];
+  $catatan = $_POST['catatan'];
+
   $query = "INSERT INTO pelanggan values (seq_idPelanggan.nextval, '$namadpn', '$namablkg', '$email', '$password', '$nohp')";
   $hasil = oci_parse($koneksi, $query);
   oci_execute($hasil);
