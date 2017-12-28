@@ -8,15 +8,12 @@
   $kecamatan = $_POST['kecamatan'];
   $hp = $_POST['hp'];
   $catatan = $_POST['catatan'];
+  $idcart = $_POST['idcart'];
+  $totalorder = $_POST['totalorder'];
 
-  $query = "INSERT INTO pelanggan values (seq_idPelanggan.nextval, '$namadpn', '$namablkg', '$email', '$password', '$nohp')";
+  $alamatAkhir = $alamat.", ".$kecamatan.", ".$kota.", ".$provinsi;
+  $query = "INSERT INTO orderProduk values (seq_idOrder.nextval, 2, 1, '$alamatAkhir', '$_SESSION[pelanggan]', '$idcart', CURRENT_TIMESTAMP, '$totalorder')";
   $hasil = oci_parse($koneksi, $query);
   oci_execute($hasil);
-
-  $cek = "SELECT MAX(IDPELANGGAN) AS MAX FROM pelanggan";
-  $cekData = oci_parse($koneksi, $cek);
-  oci_execute($cekData);
-  $hasil = oci_fetch_assoc($cekData);
-  $_SESSION['pelanggan'] = $hasil['MAX'];
   header("location:index.php");
 ?>

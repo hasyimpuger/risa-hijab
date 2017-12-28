@@ -214,7 +214,15 @@
                     echo "<tr>
                           <td class='text-center'><a href='product.php?kategori=$barisProduk[IDKATEGORI]&id=$barisProduk[IDPRODUK]'><img src='http://localhost/risa/image/gambar-produk/$baris1[LOKASIFOTO]' width='70px' class='img-thumbnail' /></a></td>
                           <td class='text-left'><a href='product.php?kategori=$barisProduk[IDKATEGORI]&id=$barisProduk[IDPRODUK]'>$barisProduk[NAMAPRODUK]</a></td>
-                          <td class='text-left'>$baris[UKURAN]</td>
+                          <td class='text-left'>";
+                          if ($baris['UKURAN'] == 1) {
+                            echo "S";
+                          }else if ($baris['UKURAN'] == 2) {
+                            echo "M";
+                          }else{
+                            echo "L";
+                          }
+                          echo"</td>
                           <td class='text-left'>$baris[JUMLAHPRODUK]</td>
                           <td class='text-right'>$satuan</td>
                           <td class='text-right'>$baris[HARGA]</td>

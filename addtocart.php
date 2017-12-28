@@ -11,18 +11,18 @@
   oci_execute($dataProduk);
   $hasilProduk = oci_fetch_assoc($dataProduk);
 
-  $cekCart = "SELECT * FROM cart WHERE idpelanggan = '$_SESSION[pelanggan]'";
+  $cekCart = "SELECT * FROM cart WHERE idpelanggan = '$_SESSION[pelanggan]' AND cartstatus = '0'";
   $dataCart = oci_parse($koneksi, $cekCart);
   oci_execute($dataCart);
   $hasilCart = oci_fetch_assoc($dataCart);
 
   if($hasilCart == NULL){
-    $buatCart = "INSERT INTO cart values (seq_idCart.nextval, '$_SESSION[pelanggan]', 0)";
+    $buatCart = "INSERT INTO cart values (seq_idCart.nextval, '$_SESSION[pelanggan]', 0,0)";
     $hasil = oci_parse($koneksi, $buatCart);
     oci_execute($hasil);
   }
 
-  $cekCart1 = "SELECT * FROM cart WHERE idpelanggan = '$_SESSION[pelanggan]'";
+  $cekCart1 = "SELECT * FROM cart WHERE idpelanggan = '$_SESSION[pelanggan]'  AND cartstatus = '0'";
   $dataCart1 = oci_parse($koneksi, $cekCart1);
   oci_execute($dataCart1);
   $hasilCart1 = oci_fetch_assoc($dataCart1);

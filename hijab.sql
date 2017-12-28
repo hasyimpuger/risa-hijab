@@ -94,6 +94,7 @@ create table cart (
 	idCart number(10) primary key,
 	idPelanggan number(10) not null,
 	totalHarga number(10) not null,
+	cartStatus number(4) not null,
 	constraint fk_idPelanggan4 foreign key(idPelanggan) references pelanggan(idPelanggan) on delete cascade
 );
 
@@ -147,7 +148,8 @@ create table cartItem (
   idCartItem number(10) primary key,
   idCart number(10) not null,
   idProduk number(10) not null,
-  subTotalHarga number(10) not null,
+  harga number(10) not null,
+	ukuran varchar2(10) not null,
   jumlahProduk number(10) not null,
   constraint fk_idCart2 foreign key(idCart) references cart(idCart) on delete cascade,
   constraint fk_idProduk2 foreign key(idProduk) references produk(idProduk) on delete cascade

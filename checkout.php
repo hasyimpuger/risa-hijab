@@ -219,7 +219,7 @@
                             </thead>
                             <tbody>
                               <?php
-                              $cart = "SELECT * FROM cart where idpelanggan = '$_SESSION[pelanggan]'";
+                              $cart = "SELECT * FROM cart where idpelanggan = '$_SESSION[pelanggan]' AND cartstatus = '0'";
                               $hasil = oci_parse($koneksi, $cart);
                               oci_execute($hasil);
                               $baris3 = oci_fetch_assoc($hasil);
@@ -248,7 +248,8 @@
                                     </tr>";
                               }
                               ?>
-
+                              <input type="hidden" name="idcart" value="<?php echo $baris3['IDCART']?>">
+                              <input type="hidden" name="totalorder" value="<?php echo $baris3['TOTALHARGA']?>">
                             </tbody>                            <tfoot>
                               <tr>
                                 <td colspan="5" class="text-right"><strong>Total:</strong></td>
