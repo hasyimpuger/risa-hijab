@@ -10,5 +10,5 @@
   oci_execute($cekData);
   $hasil = oci_fetch_assoc($cekData);
   $_SESSION['pelanggan'] = $hasil['IDPELANGGAN'];
-  header("location:index.php");
+  header("location:login.php");
 ?>

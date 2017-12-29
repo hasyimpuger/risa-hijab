@@ -38,7 +38,7 @@
   oci_execute($hasil);
 
   $totalharga = $hasilCart1['TOTALHARGA'] + $harga;
-  $tambahHarga = "UPDATE cart SET totalharga = '$totalharga'";
+  $tambahHarga = "UPDATE cart SET totalharga = '$totalharga' WHERE idCart = '$hasilCart1[IDCART]'";
   $hasil = oci_parse($koneksi, $tambahHarga);
   oci_execute($hasil);
 

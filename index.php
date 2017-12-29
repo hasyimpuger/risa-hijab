@@ -9,7 +9,7 @@
 <meta name="format-detection" content="telephone=no" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <link href="image/favicon.png" rel="icon" />
-<title>Marketshop - eCommerce HTML Template</title>
+<title>Risa Hijab | Beranda</title>
 <meta name="description" content="Responsive and clean html template design for any kind of ecommerce webshop">
 <!-- CSS Part Start-->
 <link rel="stylesheet" type="text/css" href="js/bootstrap/css/bootstrap.min.css" />
@@ -71,13 +71,62 @@
         <div class="table-container">
           <!-- Mini Cart Start-->
           <div class="col-table-cell col-lg-3 col-md-3 col-sm-12 col-xs-12 inner">
+            <?php
+            if(isset($_SESSION['pelanggan'])){
+              $cart = "SELECT * FROM cart where idpelanggan = '$_SESSION[pelanggan]' AND cartstatus = '0'";
+              $hasil = oci_parse($koneksi, $cart);
+              oci_execute($hasil);
+              $baris3 = oci_fetch_assoc($hasil);
+
+              $count = "SELECT COUNT(*) AS COUNT FROM cartitem where idcart = '$baris3[IDCART]'";
+              $hasilCount = oci_parse($koneksi, $count);
+              oci_execute($hasilCount);
+              $baris4 = oci_fetch_assoc($hasilCount);
+
+            ?>
             <div id="cart">
-              <button type="button" data-toggle="dropdown" data-loading-text="Loading..." class="heading dropdown-toggle"> <span class="cart-icon pull-left flip"></span> <span id="cart-total">2 produk - Rp180.000</span></button>
+
+              <button type="button" data-toggle="dropdown" data-loading-text="Loading..." class="heading dropdown-toggle"> <span class="cart-icon pull-left flip"></span> <span id="cart-total"><?php echo $baris4['COUNT']; ?> produk - Rp<?php echo $baris3['TOTALHARGA'] ?></span></button>
               <ul class="dropdown-menu">
                 <li>
                   <table class="table">
-                    <tbody>
+                    <thead>
                       <tr>
+                        <td class="text-center"><b>Gambar</b></td>
+                        <td class="text-left"><b>Nama Produk</b></td>
+                        <td class="text-left"><b>Jumlah</b></td>
+                        <td class="text-right"><b>Harga Satuan</b></td>
+                        <td class="text-right"><b>Total Harga</b></td>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <?php
+                      $cartItem = "SELECT * FROM cartitem where idcart = '$baris3[IDCART]'";
+                      $hasilItem = oci_parse($koneksi, $cartItem);
+                      oci_execute($hasilItem);
+                      while($baris = oci_fetch_assoc($hasilItem)){
+                        $produk = "SELECT * FROM produk where idproduk = '$baris[IDPRODUK]'";
+                        $hasilProduk = oci_parse($koneksi, $produk);
+                        oci_execute($hasilProduk);
+                        $barisProduk = oci_fetch_assoc($hasilProduk);
+
+                        $query1 = "SELECT * FROM fotoproduk where idproduk = $barisProduk[IDPRODUK]";
+                        $hasil1 = oci_parse($koneksi, $query1);
+                        oci_execute($hasil1);
+                        $baris1 = oci_fetch_assoc($hasil1);
+                        $satuan = $baris['HARGA'] / $baris['JUMLAHPRODUK'];
+                        echo "<tr>
+                              <td class='text-center'><a href='product.php?kategori=$barisProduk[IDKATEGORI]&id=$barisProduk[IDPRODUK]'><img src='http://localhost/risa/image/gambar-produk/$baris1[LOKASIFOTO]' width='70px' class='img-thumbnail' /></a></td>
+                              <td class='text-left'><a href='product.php?kategori=$barisProduk[IDKATEGORI]&id=$barisProduk[IDPRODUK]'>$barisProduk[NAMAPRODUK]</a></td>
+                              <td class='text-left'>$baris[JUMLAHPRODUK]</td>
+                              <td class='text-right'>$satuan</td>
+                              <td class='text-right'>$baris[HARGA]</td>
+                              <td class='text-center'><a href='deletelist.php?id=$baris[IDCARTITEM]' class='btn btn-danger btn-xs remove' title='Remove' onClick='' type='button'><i class='fa fa-times'></i></a></td>
+                            </tr>";
+                      }
+
+                      ?>
+                      <!-- <tr>
                         <td class="text-center"><a href="product.php"><img class="img-thumbnail" title="Xitefun Causal Wear Fancy Shoes" alt="Xitefun Causal Wear Fancy Shoes" src="image/product/sony_vaio_1-50x75.jpg"></a></td>
                         <td class="text-left"><a href="product.html">Xitefun Causal Wear Fancy Shoes</a></td>
                         <td class="text-right">x 1</td>
@@ -90,7 +139,7 @@
                         <td class="text-right">x 1</td>
                         <td class="text-right">$230.00</td>
                         <td class="text-center"><button class="btn btn-danger btn-xs remove" title="Remove" onClick="" type="button"><i class="fa fa-times"></i></button></td>
-                      </tr>
+                      </tr> -->
                     </tbody>
                   </table>
                 </li>
@@ -99,29 +148,19 @@
                     <table class="table table-bordered">
                       <tbody>
                         <tr>
-                          <td class="text-right"><strong>Sub-Total</strong></td>
-                          <td class="text-right">$940.00</td>
-                        </tr>
-                        <tr>
-                          <td class="text-right"><strong>Eco Tax (-2.00)</strong></td>
-                          <td class="text-right">$4.00</td>
-                        </tr>
-                        <tr>
-                          <td class="text-right"><strong>VAT (20%)</strong></td>
-                          <td class="text-right">$188.00</td>
-                        </tr>
-                        <tr>
                           <td class="text-right"><strong>Total</strong></td>
-                          <td class="text-right">$1,132.00</td>
+                          <td class="text-right">Rp<?php echo $baris3['TOTALHARGA']; ?></td>
                         </tr>
                       </tbody>
                     </table>
-                    <p class="checkout"><a href="cart.html" class="btn btn-primary"><i class="fa fa-shopping-cart"></i> View Cart</a>&nbsp;&nbsp;&nbsp;<a href="checkout.html" class="btn btn-primary"><i class="fa fa-share"></i> Checkout</a></p>
+                    <p class="checkout"><a href="cart.php" class="btn btn-primary"><i class="fa fa-shopping-cart"></i> View Cart</a>&nbsp;&nbsp;&nbsp;<a href="checkout.php" class="btn btn-primary"><i class="fa fa-share"></i> Checkout</a></p>
                   </div>
                 </li>
               </ul>
             </div>
-          </div>
+
+        <?php } ?>
+        </div>
           <!-- Mini Cart End-->
           <!-- Logo Start -->
           <div class="col-table-cell col-lg-6 col-md-6 col-sm-12 col-xs-12">
@@ -147,14 +186,14 @@
         <div class="collapse navbar-collapse navbar-ex1-collapse">
           <ul class="nav navbar-nav">
             <li><a class="home_link" title="Home" href="index.php">Beranda</a></li>
-            <li class="mega-menu dropdown"><a href="belanja.php">Belanja</a></li>
+            <li class="mega-menu dropdown"><a href="#">Belanja</a></li>
             <li class="mega-menu dropdown"> <a href="#">Kategori</a>
               <div class="dropdown-menu">
-                <div class="column col-lg-2 col-md-3"><a href="belanja.php?kategori=phasmina">Pashmina</a>
+                <div class="column col-lg-2 col-md-3"><a href="#">Pashmina</a>
                   <div>
                     <ul>
-                      <li> <a href="belanja.php?kategori=phasmina&cari=fatma">Fatma </a> </li>
-                      <li> <a href="belanja.php?kategori=phasmina&cari=ghania">Ghania </a> </li>
+                      <li> <a href="#">Fatma </a> </li>
+                      <li> <a href="#">Ghania </a> </li>
                     </ul>
                   </div>
                 </div>
@@ -162,7 +201,7 @@
             </li>
             <li class="mega-menu dropdown"><a href="#">Cara Belanja</a></li>
             <li class="mega-menu dropdown"><a href="#">Tutorial Hijab</a></li>
-            <li class="mega-menu dropdown"><a href="about-us.php">About Us</a></li>
+            <li class="mega-menu dropdown"><a href="#">About Us</a></li>
           </ul>
         </div>
       </div>
@@ -173,172 +212,7 @@
   <div class="rev_slider_wrapper">
     <div id="slider1" class="rev_slider"  data-version="5.0">
       <ul>
-        <li data-transition="fade">
-          <!-- MAIN IMAGE -->
-          <img src="images/dummy.png" style='background-color:#eeeeee' alt="">
-          <!-- LAYER NR. 1 -->
-          <div class="tp-caption tp-resizeme rs-parallaxlevel-2"
-									 id="slide-1-layer-1"
-									 data-x="['right','left','center','center']" data-hoffset="['0','633','-110','-60']"
-									 data-y="['top','top','top','bottom']" data-voffset="['0','0','0','0']"
-												data-width="none"
-									data-height="none"
-									data-whitespace="nowrap"
-									data-transform_idle="o:1;"
 
-									 data-transform_in="x:right;s:800;e:Power3.easeOut;"
-									 data-transform_out="opacity:0;s:1500;e:Power4.easeIn;s:1500;e:Power4.easeIn;"
-									data-start="300"
-									data-responsive_offset="on"
-
-
-									style="z-index: 7;"><img data-lazyload="image/slider/revslider/06man.png" data-hh="490" data-ww="617" alt="man" src="image/slider/revslider/06man.png" style="width: 617px; height: 490px;"> </div>
-          <!-- LAYER NR. 2 -->
-          <div class="tp-caption tp-shape tp-shapewrapper  tp-resizeme"
-
-	 id="slide-1-layer-2"
-	 data-x="left" data-hoffset="30"
-	 data-y="middle" data-voffset="-110"
-	 data-width="160"
-	 data-height="10"
-	 data-whitespace="nowrap"
-	 data-transform_idle="o:1;"
-	 data-style_hover="cursor:pointer;"
-	 data-transform_in="opacity:0;s:300;e:Power2.easeInOut;"
-	 data-transform_out="opacity:0;s:300;s:300;"
-	 data-start="1400"
-	 data-responsive_offset="on"
-
-	 style="z-index: 9;
-	 	background-color:#e5e5e5;"> </div>
-          <!-- LAYER NR. 3 -->
-          <div class="tp-caption NotGeneric-Title tp-resizeme"
-									 id="slide-1-layer-3"
-									 data-x="left" data-hoffset="210"
-									 data-y="middle" data-voffset="-110"
-												data-width="['auto','auto','auto','auto']"
-									data-height="['auto','auto','auto','auto']"
-                                    data-fontsize="['22','70','70','45']"
-									data-lineheight="['22','70','70','50']"
-                                    data-color="#000"
-                                    data-fontweight="1400"
-									data-transform_idle="o:1;"
-
-									 data-transform_in="y:[100%];z:0;rZ:-35deg;sX:1;sY:1;skX:0;skY:0;s:2000;e:Power4.easeInOut;"
-									 data-transform_out="s:1000;e:Power2.easeInOut;s:1000;e:Power2.easeInOut;"
-									 data-mask_in="x:0px;y:0px;s:inherit;e:inherit;"
-									data-start="650"
-									data-splitin="chars"
-									data-splitout="none"
-									data-responsive_offset="on"
-
-									data-elementdelay="0.05"
-
-									style="z-index: 6; white-space: nowrap; ">END OF </div>
-          <!-- LAYER NR. 4 -->
-          <div class="tp-caption tp-shape tp-shapewrapper  tp-resizeme"
-
-	 id="slide-1-layer-4"
-	 data-x="left" data-hoffset="310"
-	 data-y="middle" data-voffset="-110"
-	 data-width="160"
-	 data-height="10"
-	 data-whitespace="nowrap"
-	 data-transform_idle="o:1;"
-	 data-style_hover="cursor:pointer;"
-	 data-transform_in="opacity:0;s:300;e:Power2.easeInOut;"
-	 data-transform_out="opacity:0;s:300;s:300;"
-	 data-start="1400"
-	 data-responsive_offset="on"
-
-	 style="z-index: 9;
-	 	background-color:#e5e5e5;"> </div>
-          <!-- LAYER NR. 5 -->
-          <div class="tp-caption NotGeneric-Title tp-resizeme"
-									 id="slide-1-layer-5"
-									 data-x="left" data-hoffset="30"
-									 data-y="middle" data-voffset="-55"
-									data-width="['auto','auto','auto','auto']"
-									data-height="['auto','auto','auto','auto']"
-                                    data-fontsize="['65','60','60','45']"
-									data-lineheight="['65','60','60','50']"
-                                    data-color="#000"
-                                    data-fontweight="700"
-									data-transform_idle="o:1;"
-									 data-transform_in="x:[-105%];z:0;rX:0deg;rY:0deg;rZ:-90deg;sX:1;sY:1;skX:0;skY:0;s:2000;e:Power4.easeInOut;"
-									 data-transform_out="s:1000;e:Power2.easeInOut;s:1000;e:Power2.easeInOut;"
-									 data-mask_in="x:0px;y:0px;s:inherit;e:inherit;"
-									data-start="800"
-									data-splitin="chars"
-									data-splitout="none"
-									data-responsive_offset="on"
-									data-elementdelay="0.05"
-									style="z-index: 6; white-space: nowrap; ">SEASON SALE </div>
-          <!-- LAYER NR. 6 -->
-          <div class="tp-caption tp-shape tp-shapewrapper  tp-resizeme"
-
-	 id="slide-1-layer-6"
-	 data-x="left" data-hoffset="30"
-	 data-y="middle" data-voffset="0"
-	 data-width="440"
-	 data-height="10"
-	 data-whitespace="nowrap"
-	 data-transform_idle="o:1;"
-	 data-style_hover="cursor:pointer;"
-	 data-transform_in="opacity:0;s:300;e:Power2.easeInOut;"
-	 data-transform_out="opacity:0;s:300;s:300;"
-	 data-start="1600"
-	 data-responsive_offset="on"
-
-	 style="z-index: 9;
-	 	background-color:#e5e5e5;"> </div>
-          <!-- LAYER NR. 7 -->
-          <div class="tp-caption NotGeneric-Title tp-resizeme"
-									 id="slide-1-layer-7"
-									 data-x="left" data-hoffset="140"
-									 data-y="middle" data-voffset="50"
-									data-width="['auto','auto','auto','auto']"
-									data-height="['auto','auto','auto','auto']"
-                                    data-fontsize="['28','28','28','22']"
-									data-lineheight="['30','30','30','22']"
-                                    data-color="#000"
-                                    data-fontweight="700"
-									data-transform_idle="o:1;"
-
-									 data-transform_in="x:{-50,50};y:{-5,50};rX:{-90,90};rY:{-90,90};rZ:{-360,360};sX:0;sY:0;opacity:0;s:2000;e:Power4.easeInOut;"
-									 data-transform_out="s:1000;e:Power2.easeInOut;s:1000;e:Power2.easeInOut;"
-									data-start="1700"
-									data-splitin="chars"
-									data-splitout="none"
-									data-responsive_offset="on"
-
-									data-elementdelay="0.05"
-
-									style="z-index: 6; white-space: nowrap; ">FLATE 20% OFF </div>
-          <!-- LAYER NR. 8 -->
-          <div class="tp-caption WebProduct-Button rev-btn rs-parallaxlevel-0"
-									 id="slide-1-layer-8"
-									 data-x="['left','left','left','left']" data-hoffset="['150','0','0','0']"
-                                     data-y="['middle','middle','middle','middle']" data-voffset="['120','110','110','31']"
-									data-width="['auto']"
-									data-height="['auto']"
-									data-whitespace="nowrap"
-									data-transform_idle="o:1;"
-
-									data-transform_hover="o:1;rX:0;rY:0;rZ:0;z:0;s:300;e:Linear.easeNone;"
-									data-style_hover="c:rgba(51, 51, 51, 1.00);bg:rgba(255, 255, 255, 1.00);"
-
-									data-transform_in="y:[100%];z:0;rX:0deg;rY:0;rZ:0;sX:1;sY:1;skX:0;skY:0;opacity:0;s:2000;e:Power4.easeInOut;"
-									 data-transform_out="s:1000;s:1000;"
-									data-start="2000"
-									data-splitin="none"
-									data-splitout="none"
-									data-actions='[{"event":"click","action":"scrollbelow","offset":"px"}]'
-									data-responsive_offset="on"
-									data-responsive="off"
-
-									style="z-index: 14; white-space: nowrap;">SHOP NOW </div>
-        </li>
         <li data-transition="fade">
           <!-- MAIN IMAGE -->
           <img src="image/slider/revslider/01minimalist-banner.jpg"  alt=""  width="1349" height="480">
@@ -532,14 +406,6 @@
       <div class="row">
         <!--Middle Part Start-->
         <div id="content" class="col-xs-12">
-          <!-- Banner Start -->
-          <div class="marketshop-banner">
-            <div class="row">
-              <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12"><a href="#"><img src="image/banner/minimalist-small-banner.jpg" alt="2 Block Banner" title="2 Block Banner" /></a></div>
-              <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12"><a href="#"><img src="image/banner/minimalist-small-banner1.jpg" alt="2 Block Banner 1" title="2 Block Banner 1" /></a></div>
-            </div>
-          </div>
-          <!-- Banner End -->
           <!-- Product Tab Start -->
           <div id="product-tab" class="product-tab">
             <ul id="tabs" class="tabs">
@@ -567,7 +433,7 @@
                           <p class='price'><span class='price-new'>Rp$diskon</span> <span class='price-old'>Rp$baris[HARGAPRODUK]</span><span class='saving'>-$baris[DISKONPRODUK]%</span></p>
                         </div>
                         <div class='button-group'>
-                          <button class='btn-primary' type='button' onClick='cart.add('42');'><span>Add to Cart</span></button>
+                          <a class='btn-primary' href='product.php?kategori=$baris[IDKATEGORI]&id=$baris[IDPRODUK]' ><span>Lihat Produk</span></a>
                         </div>
                       </div>";
                     }
@@ -633,20 +499,20 @@
         <div class="row">
           <div class="contact col-lg-4 col-md-4 col-sm-12 col-xs-12">
             <h5>Tentang Risa Hijab</h5>
-            <p>Tentang Risa Hijab.</p>
-            <img alt="" src="image/logo-small.png"> </div>
+            <p>RisaHijab adalah produk lokal yang menjual berbagai macam jenis kerudung, untuk kebutuhan muslimah yang ingin tampil modis.</p>
+            <img alt="" src="image/logo.png"> </div>
           <div class="column col-lg-2 col-md-2 col-sm-3 col-xs-12">
             <h5>Informasi</h5>
             <ul>
-              <li><a href="about-us.html">Tentang Kami</a></li>
-              <li><a href="about-us.html">Privacy Policy</a></li>
-              <li><a href="about-us.html">Terms &amp; Conditions</a></li>
+              <li><a href="#">Tentang Kami</a></li>
+              <li><a href="#">Privacy Policy</a></li>
+              <li><a href="#">Terms &amp; Conditions</a></li>
             </ul>
           </div>
           <div class="column col-lg-2 col-md-2 col-sm-3 col-xs-12">
             <h5>Customer Service</h5>
             <ul>
-              <li><a href="contact-us.html">Hubungi Kami</a></li>
+              <li><a href="#">Hubungi Kami</a></li>
             </ul>
           </div>
           <div class="column col-lg-2 col-md-2 col-sm-3 col-xs-12">
@@ -659,7 +525,7 @@
           <div class="column col-lg-2 col-md-2 col-sm-3 col-xs-12">
             <h5>Kontak</h5>
             <p>
-              Alamat: Jl. Sukamaju 15 No B-17 RT09 RW06 Kel. Padasuka Cimahi Tengah, Cimahi, Indonesia<br><br>
+              Alamat: Jl. Negla Gg. Al Ikhlas No.21, Isola, Sukasari, Kota Bandung<br><br>
               (022) 85440033
               info@risa.com
             </p>

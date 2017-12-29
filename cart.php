@@ -9,7 +9,7 @@
 <meta name="format-detection" content="telephone=no" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <link href="image/favicon.png" rel="icon" />
-<title>Shopping Cart</title>
+<title>Risa Hijab | Cart</title>
 <meta name="description" content="Responsive and clean html template design for any kind of ecommerce webshop">
 <!-- CSS Part Start-->
 <link rel="stylesheet" type="text/css" href="js/bootstrap/css/bootstrap.min.css" />
@@ -68,13 +68,62 @@
         <div class="table-container">
           <!-- Mini Cart Start-->
           <div class="col-table-cell col-lg-3 col-md-3 col-sm-12 col-xs-12 inner">
+            <?php
+            if(isset($_SESSION['pelanggan'])){
+              $cart = "SELECT * FROM cart where idpelanggan = '$_SESSION[pelanggan]' AND cartstatus = '0'";
+              $hasil = oci_parse($koneksi, $cart);
+              oci_execute($hasil);
+              $baris3 = oci_fetch_assoc($hasil);
+
+              $count = "SELECT COUNT(*) AS COUNT FROM cartitem where idcart = '$baris3[IDCART]'";
+              $hasilCount = oci_parse($koneksi, $count);
+              oci_execute($hasilCount);
+              $baris4 = oci_fetch_assoc($hasilCount);
+
+            ?>
             <div id="cart">
-              <button type="button" data-toggle="dropdown" data-loading-text="Loading..." class="heading dropdown-toggle"> <span class="cart-icon pull-left flip"></span> <span id="cart-total">2 produk - Rp180.000</span></button>
+
+              <button type="button" data-toggle="dropdown" data-loading-text="Loading..." class="heading dropdown-toggle"> <span class="cart-icon pull-left flip"></span> <span id="cart-total"><?php echo $baris4['COUNT']; ?> produk - Rp<?php echo $baris3['TOTALHARGA'] ?></span></button>
               <ul class="dropdown-menu">
                 <li>
                   <table class="table">
-                    <tbody>
+                    <thead>
                       <tr>
+                        <td class="text-center"><b>Gambar</b></td>
+                        <td class="text-left"><b>Nama Produk</b></td>
+                        <td class="text-left"><b>Jumlah</b></td>
+                        <td class="text-right"><b>Harga Satuan</b></td>
+                        <td class="text-right"><b>Total Harga</b></td>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <?php
+                      $cartItem = "SELECT * FROM cartitem where idcart = '$baris3[IDCART]'";
+                      $hasilItem = oci_parse($koneksi, $cartItem);
+                      oci_execute($hasilItem);
+                      while($baris = oci_fetch_assoc($hasilItem)){
+                        $produk = "SELECT * FROM produk where idproduk = '$baris[IDPRODUK]'";
+                        $hasilProduk = oci_parse($koneksi, $produk);
+                        oci_execute($hasilProduk);
+                        $barisProduk = oci_fetch_assoc($hasilProduk);
+
+                        $query1 = "SELECT * FROM fotoproduk where idproduk = $barisProduk[IDPRODUK]";
+                        $hasil1 = oci_parse($koneksi, $query1);
+                        oci_execute($hasil1);
+                        $baris1 = oci_fetch_assoc($hasil1);
+                        $satuan = $baris['HARGA'] / $baris['JUMLAHPRODUK'];
+                        echo "<tr>
+                              <td class='text-center'><a href='product.php?kategori=$barisProduk[IDKATEGORI]&id=$barisProduk[IDPRODUK]'><img src='http://localhost/risa/image/gambar-produk/$baris1[LOKASIFOTO]' width='70px' class='img-thumbnail' /></a></td>
+                              <td class='text-left'><a href='product.php?kategori=$barisProduk[IDKATEGORI]&id=$barisProduk[IDPRODUK]'>$barisProduk[NAMAPRODUK]</a></td>
+                              <td class='text-left'>$baris[JUMLAHPRODUK]</td>
+                              <td class='text-right'>$satuan</td>
+                              <td class='text-right'>$baris[HARGA]</td>
+                              <td class='text-center'><a href='deletelist.php?id=$baris[IDCARTITEM]' class='btn btn-danger btn-xs remove' title='Remove' onClick='' type='button'><i class='fa fa-times'></i></a></td>
+                            </tr>";
+                      }
+
+                      ?>
+                      <!-- <tr>
                         <td class="text-center"><a href="product.php"><img class="img-thumbnail" title="Xitefun Causal Wear Fancy Shoes" alt="Xitefun Causal Wear Fancy Shoes" src="image/product/sony_vaio_1-50x75.jpg"></a></td>
                         <td class="text-left"><a href="product.html">Xitefun Causal Wear Fancy Shoes</a></td>
                         <td class="text-right">x 1</td>
@@ -87,7 +136,7 @@
                         <td class="text-right">x 1</td>
                         <td class="text-right">$230.00</td>
                         <td class="text-center"><button class="btn btn-danger btn-xs remove" title="Remove" onClick="" type="button"><i class="fa fa-times"></i></button></td>
-                      </tr>
+                      </tr> -->
                     </tbody>
                   </table>
                 </li>
@@ -96,29 +145,19 @@
                     <table class="table table-bordered">
                       <tbody>
                         <tr>
-                          <td class="text-right"><strong>Sub-Total</strong></td>
-                          <td class="text-right">$940.00</td>
-                        </tr>
-                        <tr>
-                          <td class="text-right"><strong>Eco Tax (-2.00)</strong></td>
-                          <td class="text-right">$4.00</td>
-                        </tr>
-                        <tr>
-                          <td class="text-right"><strong>VAT (20%)</strong></td>
-                          <td class="text-right">$188.00</td>
-                        </tr>
-                        <tr>
                           <td class="text-right"><strong>Total</strong></td>
-                          <td class="text-right">$1,132.00</td>
+                          <td class="text-right">Rp<?php echo $baris3['TOTALHARGA']; ?></td>
                         </tr>
                       </tbody>
                     </table>
-                    <p class="checkout"><a href="cart.html" class="btn btn-primary"><i class="fa fa-shopping-cart"></i> View Cart</a>&nbsp;&nbsp;&nbsp;<a href="checkout.html" class="btn btn-primary"><i class="fa fa-share"></i> Checkout</a></p>
+                    <p class="checkout"><a href="cart.php" class="btn btn-primary"><i class="fa fa-shopping-cart"></i> View Cart</a>&nbsp;&nbsp;&nbsp;<a href="checkout.php" class="btn btn-primary"><i class="fa fa-share"></i> Checkout</a></p>
                   </div>
                 </li>
               </ul>
             </div>
-          </div>
+
+        <?php } ?>
+        </div>
           <!-- Mini Cart End-->
           <!-- Logo Start -->
           <div class="col-table-cell col-lg-6 col-md-6 col-sm-12 col-xs-12">
@@ -144,14 +183,14 @@
         <div class="collapse navbar-collapse navbar-ex1-collapse">
           <ul class="nav navbar-nav">
             <li><a class="home_link" title="Home" href="index.php">Beranda</a></li>
-            <li class="mega-menu dropdown"><a href="belanja.php">Belanja</a></li>
+            <li class="mega-menu dropdown"><a href="#">Belanja</a></li>
             <li class="mega-menu dropdown"> <a href="#">Kategori</a>
               <div class="dropdown-menu">
-                <div class="column col-lg-2 col-md-3"><a href="belanja.php?kategori=phasmina">Pashmina</a>
+                <div class="column col-lg-2 col-md-3"><a href="#">Pashmina</a>
                   <div>
                     <ul>
-                      <li> <a href="belanja.php?kategori=phasmina&cari=fatma">Fatma </a> </li>
-                      <li> <a href="belanja.php?kategori=phasmina&cari=ghania">Ghania </a> </li>
+                      <li> <a href="#">Fatma </a> </li>
+                      <li> <a href="#">Ghania </a> </li>
                     </ul>
                   </div>
                 </div>
@@ -159,7 +198,7 @@
             </li>
             <li class="mega-menu dropdown"><a href="#">Cara Belanja</a></li>
             <li class="mega-menu dropdown"><a href="#">Tutorial Hijab</a></li>
-            <li class="mega-menu dropdown"><a href="about-us.php">About Us</a></li>
+            <li class="mega-menu dropdown"><a href="#">About Us</a></li>
           </ul>
         </div>
       </div>
@@ -192,7 +231,7 @@
                 </thead>
                 <tbody>
                   <?php
-                  $cart = "SELECT * FROM cart where idpelanggan = '$_SESSION[pelanggan]'";
+                  $cart = "SELECT * FROM cart where idpelanggan = '$_SESSION[pelanggan]' AND cartstatus = '0'";
                   $hasil = oci_parse($koneksi, $cart);
                   oci_execute($hasil);
                   $baris3 = oci_fetch_assoc($hasil);
@@ -244,7 +283,7 @@
             </div>
           </div>
           <div class="buttons">
-            <div class="pull-left"><a href="belanja.php" class="btn btn-default">Continue Shopping</a></div>
+            <div class="pull-left"><a href="index.php" class="btn btn-default">Continue Shopping</a></div>
             <div class="pull-right"><a href="checkout.php" class="btn btn-primary">Checkout</a></div>
           </div>
         </div>
@@ -258,44 +297,37 @@
       <div class="container">
         <div class="row">
           <div class="contact col-lg-4 col-md-4 col-sm-12 col-xs-12">
-            <h5>About MarketShop</h5>
-            <p>Marketshop is HTML Ecommerce Template. This is a CMS block. You can insert any content (HTML, Text, Images) Here.</p>
-            <img alt="" src="image/logo-small.png">
-          </div>
+            <h5>Tentang Risa Hijab</h5>
+            <p>RisaHijab adalah produk lokal yang menjual berbagai macam jenis kerudung, untuk kebutuhan muslimah yang ingin tampil modis.</p>
+            <img alt="" src="image/logo.png"> </div>
           <div class="column col-lg-2 col-md-2 col-sm-3 col-xs-12">
-            <h5>Information</h5>
+            <h5>Informasi</h5>
             <ul>
-              <li><a href="about-us.html">About Us</a></li>
-              <li><a href="about-us.html">Delivery Information</a></li>
-              <li><a href="about-us.html">Privacy Policy</a></li>
-              <li><a href="about-us.html">Terms &amp; Conditions</a></li>
+              <li><a href="#">Tentang Kami</a></li>
+              <li><a href="#">Privacy Policy</a></li>
+              <li><a href="#">Terms &amp; Conditions</a></li>
             </ul>
           </div>
           <div class="column col-lg-2 col-md-2 col-sm-3 col-xs-12">
             <h5>Customer Service</h5>
             <ul>
-              <li><a href="contact-us.html">Contact Us</a></li>
-              <li><a href="#">Returns</a></li>
-              <li><a href="sitemap.html">Site Map</a></li>
+              <li><a href="#">Hubungi Kami</a></li>
             </ul>
           </div>
           <div class="column col-lg-2 col-md-2 col-sm-3 col-xs-12">
-            <h5>Extras</h5>
+            <h5>Akun</h5>
             <ul>
-              <li><a href="#">Brands</a></li>
-              <li><a href="#">Gift Vouchers</a></li>
-              <li><a href="#">Affiliates</a></li>
-              <li><a href="#">Specials</a></li>
+              <li><a href="login.php">Masuk</a></li>
+              <li><a href="regiter.php">Daftar</a></li>
             </ul>
           </div>
           <div class="column col-lg-2 col-md-2 col-sm-3 col-xs-12">
-            <h5>My Account</h5>
-            <ul>
-              <li><a href="#">My Account</a></li>
-              <li><a href="#">Order History</a></li>
-              <li><a href="#">Wish List</a></li>
-              <li><a href="#">Newsletter</a></li>
-            </ul>
+            <h5>Kontak</h5>
+            <p>
+              Alamat: Jl. Negla Gg. Al Ikhlas No.21, Isola, Sukasari, Kota Bandung<br><br>
+              (022) 85440033
+              info@risa.com
+            </p>
           </div>
         </div>
       </div>
@@ -304,15 +336,9 @@
       <div class="container">
         <div id="powered" class="clearfix">
           <div class="powered_text pull-left flip">
-            <p>Marketshop Ecommerce Template © 2016 | Template By <a href="http://harnishdesign.net" target="_blank">Harnish Design</a></p>
+            <p>Copyright © 2017 Risa Hijab. All rights reserved.</p>
           </div>
           <div class="social pull-right flip"> <a href="#" target="_blank"> <img data-toggle="tooltip" src="image/socialicons/facebook.png" alt="Facebook" title="Facebook"></a> <a href="#" target="_blank"> <img data-toggle="tooltip" src="image/socialicons/twitter.png" alt="Twitter" title="Twitter"> </a> <a href="#" target="_blank"> <img data-toggle="tooltip" src="image/socialicons/google_plus.png" alt="Google+" title="Google+"> </a> <a href="#" target="_blank"> <img data-toggle="tooltip" src="image/socialicons/pinterest.png" alt="Pinterest" title="Pinterest"> </a> <a href="#" target="_blank"> <img data-toggle="tooltip" src="image/socialicons/rss.png" alt="RSS" title="RSS"> </a> </div>
-        </div>
-        <div class="bottom-row">
-          <div class="custom-text text-center">
-            <p>This is a CMS block. You can insert any content (HTML, Text, Images) Here.<br> Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
-          </div>
-          <div class="payments_types"> <a href="#" target="_blank"> <img data-toggle="tooltip" src="image/payment/payment_paypal.png" alt="paypal" title="PayPal"></a> <a href="#" target="_blank"> <img data-toggle="tooltip" src="image/payment/payment_american.png" alt="american-express" title="American Express"></a> <a href="#" target="_blank"> <img data-toggle="tooltip" src="image/payment/payment_2checkout.png" alt="2checkout" title="2checkout"></a> <a href="#" target="_blank"> <img data-toggle="tooltip" src="image/payment/payment_maestro.png" alt="maestro" title="Maestro"></a> <a href="#" target="_blank"> <img data-toggle="tooltip" src="image/payment/payment_discover.png" alt="discover" title="Discover"></a> <a href="#" target="_blank"> <img data-toggle="tooltip" src="image/payment/payment_mastercard.png" alt="mastercard" title="MasterCard"></a> </div>
         </div>
       </div>
     </div>

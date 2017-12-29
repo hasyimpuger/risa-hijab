@@ -1,3 +1,6 @@
+<?php
+include 'koneksi.php';
+session_start(); ?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -5,7 +8,7 @@
 <meta name="format-detection" content="telephone=no" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <link href="image/favicon.png" rel="icon" />
-<title>404</title>
+<title>Risa Hijab</title>
 <meta name="description" content="Responsive and clean html template design for any kind of ecommerce webshop">
 <!-- CSS Part Start-->
 <link rel="stylesheet" type="text/css" href="js/bootstrap/css/bootstrap.min.css" />
@@ -28,69 +31,31 @@
           <div class="pull-left flip left-top">
             <div class="links">
               <ul>
-                <li class="mobile"><i class="fa fa-phone"></i>+91 9898777656</li>
-                <li class="email"><a href="mailto:info@marketshop.com"><i class="fa fa-envelope"></i>info@marketshop.com</a></li>
-                <li class="wrap_custom_block hidden-sm hidden-xs"><a>Custom Block<b></b></a>
-                  <div class="dropdown-menu custom_block">
-                    <ul>
-                      <li>
-                        <table>
-                          <tbody>
-                            <tr>
-                              <td><img alt="" src="image/banner/cms-block.jpg"></td>
-                              <td><img alt="" src="image/banner/responsive.jpg"></td>
-                            </tr>
-                            <tr>
-                              <td><h4>CMS Blocks</h4></td>
-                              <td><h4>Responsive Template</h4></td>
-                            </tr>
-                            <tr>
-                              <td>This is a CMS block. You can insert any content (HTML, Text, Images) Here.</td>
-                              <td>This is a CMS block. You can insert any content (HTML, Text, Images) Here.</td>
-                            </tr>
-                            <tr>
-                              <td><strong><a class="btn btn-default btn-sm" href="#">Read More</a></strong></td>
-                              <td><strong><a class="btn btn-default btn-sm" href="#">Read More</a></strong></td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </li>
-                    </ul>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div id="language" class="btn-group">
-              <button class="btn-link dropdown-toggle" data-toggle="dropdown"> <span> <img src="image/flags/gb.png" alt="English" title="English">English <i class="fa fa-caret-down"></i></span></button>
-              <ul class="dropdown-menu">
-                <li>
-                  <button class="btn btn-link btn-block language-select" type="button" name="GB"><img src="image/flags/gb.png" alt="English" title="English" /> English</button>
-                </li>
-                <li>
-                  <button class="btn btn-link btn-block language-select" type="button" name="GB"><img src="image/flags/ar.png" alt="Arabic" title="Arabic" /> Arabic</button>
-                </li>
-              </ul>
-            </div>
-            <div id="currency" class="btn-group">
-              <button class="btn-link dropdown-toggle" data-toggle="dropdown"> <span> $ USD <i class="fa fa-caret-down"></i></span></button>
-              <ul class="dropdown-menu">
-                <li>
-                  <button class="currency-select btn btn-link btn-block" type="button" name="EUR">€ Euro</button>
-                </li>
-                <li>
-                  <button class="currency-select btn btn-link btn-block" type="button" name="GBP">£ Pound Sterling</button>
-                </li>
-                <li>
-                  <button class="currency-select btn btn-link btn-block" type="button" name="USD">$ US Dollar</button>
-                </li>
+                <li class="mobile"><i class="fa fa-phone"></i>(022) 85440033</li>
+                <li class="email"><a href="mailto:info@risa.com"><i class="fa fa-envelope"></i>info@risa.com</a></li>
               </ul>
             </div>
           </div>
           <div id="top-links" class="nav pull-right flip">
-            <ul>
-              <li><a href="login.html">Login</a></li>
-              <li><a href="register.html">Register</a></li>
-            </ul>
+            <?php
+              if(isset($_SESSION['pelanggan'])){
+                $pelanggan = "SELECT * FROM pelanggan WHERE IDPELANGGAN = $_SESSION[pelanggan]";
+                $data = oci_parse($koneksi, $pelanggan);
+                oci_execute($data);
+                $hasil = oci_fetch_assoc($data);
+                echo "<ul>
+                  <li><a>Halo, $hasil[NAMADEPAN]</a></li>
+                  <li><a href='logout.php'>KELUAR</a></li>
+                </ul>";
+
+              }else{
+                echo "<ul>
+                  <li><a href='login.php'>Masuk</a></li>
+                  <li><a href='register.php'>Daftar</a></li>
+                </ul>";
+              }
+            ?>
+
           </div>
         </div>
       </div>
@@ -100,18 +65,65 @@
     <header class="header-row">
       <div class="container">
         <div class="table-container">
-        <!-- Mini Cart Start-->
+          <!-- Mini Cart Start-->
           <div class="col-table-cell col-lg-3 col-md-3 col-sm-12 col-xs-12 inner">
+            <?php
+            if(isset($_SESSION['pelanggan'])){
+              $cart = "SELECT * FROM cart where idpelanggan = '$_SESSION[pelanggan]'";
+              $hasil = oci_parse($koneksi, $cart);
+              oci_execute($hasil);
+              $baris3 = oci_fetch_assoc($hasil);
+
+              $count = "SELECT COUNT(*) AS COUNT FROM cartitem where idcart = '$baris3[IDCART]'";
+              $hasilCount = oci_parse($koneksi, $count);
+              oci_execute($hasilCount);
+              $baris4 = oci_fetch_assoc($hasilCount);
+
+            ?>
             <div id="cart">
-              <button type="button" data-toggle="dropdown" data-loading-text="Loading..." class="heading dropdown-toggle">
-              <span class="cart-icon pull-left flip"></span>
-              <span id="cart-total">2 item(s) - $1,132.00</span></button>
+
+              <button type="button" data-toggle="dropdown" data-loading-text="Loading..." class="heading dropdown-toggle"> <span class="cart-icon pull-left flip"></span> <span id="cart-total"><?php echo $baris4['COUNT']; ?> produk - Rp<?php echo $baris3['TOTALHARGA'] ?></span></button>
               <ul class="dropdown-menu">
                 <li>
                   <table class="table">
-                    <tbody>
+                    <thead>
                       <tr>
-                        <td class="text-center"><a href="product.html"><img class="img-thumbnail" title="Xitefun Causal Wear Fancy Shoes" alt="Xitefun Causal Wear Fancy Shoes" src="image/product/sony_vaio_1-50x75.jpg"></a></td>
+                        <td class="text-center"><b>Gambar</b></td>
+                        <td class="text-left"><b>Nama Produk</b></td>
+                        <td class="text-left"><b>Jumlah</b></td>
+                        <td class="text-right"><b>Harga Satuan</b></td>
+                        <td class="text-right"><b>Total Harga</b></td>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <?php
+                      $cartItem = "SELECT * FROM cartitem where idcart = '$baris3[IDCART]'";
+                      $hasilItem = oci_parse($koneksi, $cartItem);
+                      oci_execute($hasilItem);
+                      while($baris = oci_fetch_assoc($hasilItem)){
+                        $produk = "SELECT * FROM produk where idproduk = '$baris[IDPRODUK]'";
+                        $hasilProduk = oci_parse($koneksi, $produk);
+                        oci_execute($hasilProduk);
+                        $barisProduk = oci_fetch_assoc($hasilProduk);
+
+                        $query1 = "SELECT * FROM fotoproduk where idproduk = $barisProduk[IDPRODUK]";
+                        $hasil1 = oci_parse($koneksi, $query1);
+                        oci_execute($hasil1);
+                        $baris1 = oci_fetch_assoc($hasil1);
+                        $satuan = $baris['HARGA'] / $baris['JUMLAHPRODUK'];
+                        echo "<tr>
+                              <td class='text-center'><a href='product.php?kategori=$barisProduk[IDKATEGORI]&id=$barisProduk[IDPRODUK]'><img src='http://localhost/risa/image/gambar-produk/$baris1[LOKASIFOTO]' width='70px' class='img-thumbnail' /></a></td>
+                              <td class='text-left'><a href='product.php?kategori=$barisProduk[IDKATEGORI]&id=$barisProduk[IDPRODUK]'>$barisProduk[NAMAPRODUK]</a></td>
+                              <td class='text-left'>$baris[JUMLAHPRODUK]</td>
+                              <td class='text-right'>$satuan</td>
+                              <td class='text-right'>$baris[HARGA]</td>
+                              <td class='text-center'><a href='deletelist.php?id=$baris[IDCARTITEM]' class='btn btn-danger btn-xs remove' title='Remove' onClick='' type='button'><i class='fa fa-times'></i></a></td>
+                            </tr>";
+                      }
+
+                      ?>
+                      <!-- <tr>
+                        <td class="text-center"><a href="product.php"><img class="img-thumbnail" title="Xitefun Causal Wear Fancy Shoes" alt="Xitefun Causal Wear Fancy Shoes" src="image/product/sony_vaio_1-50x75.jpg"></a></td>
                         <td class="text-left"><a href="product.html">Xitefun Causal Wear Fancy Shoes</a></td>
                         <td class="text-right">x 1</td>
                         <td class="text-right">$902.00</td>
@@ -123,7 +135,7 @@
                         <td class="text-right">x 1</td>
                         <td class="text-right">$230.00</td>
                         <td class="text-center"><button class="btn btn-danger btn-xs remove" title="Remove" onClick="" type="button"><i class="fa fa-times"></i></button></td>
-                      </tr>
+                      </tr> -->
                     </tbody>
                   </table>
                 </li>
@@ -132,29 +144,19 @@
                     <table class="table table-bordered">
                       <tbody>
                         <tr>
-                          <td class="text-right"><strong>Sub-Total</strong></td>
-                          <td class="text-right">$940.00</td>
-                        </tr>
-                        <tr>
-                          <td class="text-right"><strong>Eco Tax (-2.00)</strong></td>
-                          <td class="text-right">$4.00</td>
-                        </tr>
-                        <tr>
-                          <td class="text-right"><strong>VAT (20%)</strong></td>
-                          <td class="text-right">$188.00</td>
-                        </tr>
-                        <tr>
                           <td class="text-right"><strong>Total</strong></td>
-                          <td class="text-right">$1,132.00</td>
+                          <td class="text-right">Rp<?php echo $baris3['TOTALHARGA']; ?></td>
                         </tr>
                       </tbody>
                     </table>
-                    <p class="checkout"><a href="cart.html" class="btn btn-primary"><i class="fa fa-shopping-cart"></i> View Cart</a>&nbsp;&nbsp;&nbsp;<a href="checkout.html" class="btn btn-primary"><i class="fa fa-share"></i> Checkout</a></p>
+                    <p class="checkout"><a href="cart.php" class="btn btn-primary"><i class="fa fa-shopping-cart"></i> View Cart</a>&nbsp;&nbsp;&nbsp;<a href="checkout.html" class="btn btn-primary"><i class="fa fa-share"></i> Checkout</a></p>
                   </div>
                 </li>
               </ul>
             </div>
-          </div>
+
+        <?php } ?>
+        </div>
           <!-- Mini Cart End-->
           <!-- Logo Start -->
           <div class="col-table-cell col-lg-6 col-md-6 col-sm-12 col-xs-12">
@@ -164,7 +166,7 @@
           <!-- Search Start-->
           <div class="col-table-cell col-lg-3 col-md-3 col-sm-12 col-xs-12 inner">
             <div id="search" class="input-group">
-              <input id="filter_name" type="text" name="search" value="" placeholder="Search" class="form-control input-lg" />
+              <input id="filter_name" type="text" name="search" value="" placeholder="Pencarian" class="form-control input-lg" />
               <button type="button" class="button-search"><i class="fa fa-search"></i></button>
             </div>
           </div>
@@ -174,281 +176,32 @@
     </header>
     <!-- Header End-->
     <!-- Main Menu Start-->
-    
-      <nav id="menu" class="navbar">
-        <div class="navbar-header"> <span class="visible-xs visible-sm"> Menu <b></b></span></div>
-        <div class="container">
+    <nav id="menu" class="navbar center">
+      <div class="navbar-header"> <span class="visible-xs visible-sm"> Menu <b></b></span></div>
+      <div class="container">
         <div class="collapse navbar-collapse navbar-ex1-collapse">
           <ul class="nav navbar-nav">
-            <li><a class="home_link" title="Home" href="index.html">Home</a></li>
-            <li class="mega-menu dropdown"><a href="category.html">Men</a>
+            <li><a class="home_link" title="Home" href="index.php">Beranda</a></li>
+            <li class="mega-menu dropdown"><a href="#">Belanja</a></li>
+            <li class="mega-menu dropdown"> <a href="#">Kategori</a>
               <div class="dropdown-menu">
-                <div class="column col-lg-2 col-md-3"><a href="category.html">Footwear</a>
-                  <div>
-                  <ul>
-                            <li><a href="category.html">Casual Shoes</a></li>
-                            <li><a href="category.html">Formal Shoes</a></li>
-                            <li><a href="category.html">Sandals & Floaters</a></li>
-                            <li><a href="category.html">Sneakers</a></li>
-                            <li><a href="category.html">Sports Shoes</a></li>
-                          </ul>
-                  </div>
-                </div>
-                
-                <div class="column col-lg-2 col-md-3"><a href="category.html">Clothing</a>
+                <div class="column col-lg-2 col-md-3"><a href="#">Pashmina</a>
                   <div>
                     <ul>
-                      <li><a href="category.html">Casual</a></li>
-                      <li><a href="category.html">Jeans</a></li>
-                      <li><a href="category.html">T-Shirts</a></li>
-                      <li><a href="category.html">Formal Shirts</a></li>
+                      <li> <a href="#">Fatma </a> </li>
+                      <li> <a href="#">Ghania </a> </li>
                     </ul>
                   </div>
                 </div>
-                
-                <div class="column col-lg-2 col-md-3"><a href="category.html">Bags, Belts & Wallets</a>
-                  <div>
-                    <ul>
-                      <li><a href="category.html">Sling Bags</a></li>
-                      <li><a href="category.html">Handbags</a></li>
-                      <li><a href="category.html">Wallets & Belts</a></li>
-                    </ul>
-                  </div>
-                </div>
-                
-                <div class="column col-lg-2 col-md-3"><a href="category.html">Watches</a>
-                  <div>
-                    <ul>
-                      <li><a href="category.html">Timex</a></li>
-                      <li><a href="category.html">Titan</a></li>
-                      <li><a href="category.html">Fastrack</a></li>
-                      <li><a href="category.html">Accessories</a></li>
-                    </ul>
-                  </div>
-                </div>
-                
-                <div class="column col-lg-2 col-md-3"><a href="category.html">Games</a>
-                  <div>
-                    <ul>
-                      <li><a href="category.html">Toys</a></li>
-                      <li><a href="category.html">Puzzles</a></li>
-                      <li><a href="category.html">Hobbies</a></li>
-                      <li><a href="category.html">Strollers</a></li>
-                      <li><a href="category.html">Health & Safety</a></li>
-                    </ul>
-                  </div>
-                </div>
-                
-                 <div class="column col-lg-2 col-md-3"><a href="category.html">Accessories</a>
-                  <div>
-                    <ul>
-                      <li><a href="category.html">New Sub Categories</a></li>
-                      <li><a href="category.html">Sub Categories</a></li>
-                    </ul>
-                  </div>
-                </div>
-               
-                
               </div>
             </li>
-            <li class="mega-menu dropdown"><a href="category.html">Women</a>
-              <div class="dropdown-menu">
-                <div class="column col-lg-2 col-md-3"><a href="category.html">Ethnic Wear</a>
-                  <div>
-                  <ul>
-                            <li><a href="category.html">Dress Materials</a></li>
-                            <li><a href="category.html">Kurta and Kurti</a></li>
-                            <li><a href="category.html">Salwar Kameez Sets</a></li>
-                            <li><a href="category.html">Sarees</a></li>
-                          </ul>
-                  </div>
-                </div>
-                
-                <div class="column col-lg-2 col-md-3"><a href="category.html">Western Wear</a>
-                  <div>
-                    <ul>
-                      <li><a href="category.html">Sports and Gymwear</a></li>
-                      <li><a href="category.html">Dresses</a></li>
-                      <li><a href="category.html">Jeans</a></li>
-                      <li><a href="category.html">Polo's and T-Shirts</a></li>
-                      <li><a href="category.html">Shirts Tops & Tunics</a></li>
-                    </ul>
-                  </div>
-                </div>
-                
-                <div class="column col-lg-2 col-md-3"><a href="category.html">Bags, Belts & Wallets</a>
-                  <div>
-                    <ul>
-                      <li><a href="category.html">Handbags</a></li>
-                      <li><a href="category.html">Totes</a></li>
-                      <li><a href="category.html">Wallets & Belts</a></li>
-                    </ul>
-                  </div>
-                </div>
-                
-                <div class="column col-lg-2 col-md-3"><a href="category.html">Jewellery</a>
-                  <div>
-                    <ul>
-                      <li><a href="category.html">Diamond</a></li>
-                      <li><a href="category.html">Silver</a></li>
-                      <li><a href="category.html">Gold</a></li>
-                      <li><a href="category.html">Pearl</a></li>
-                    </ul>
-                  </div>
-                </div>
-                
-                <div class="column col-lg-2 col-md-3"><a href="category.html">Lingerie & Sleep Wear</a>
-                  <div>
-                    <ul>
-                      <li><a href="category.html">Premium</a></li>
-                    </ul>
-                  </div>
-                </div>
-                
-                 <div class="column col-lg-2 col-md-3"><a href="category.html">Accessories</a>
-                  <div>
-                    <ul>
-                      <li><a href="category.html">New Sub Categories</a></li>
-                      <li><a href="category.html">Sub Categories</a></li>
-                      <li><a href="category.html">Categories New</a></li>
-                    </ul>
-                  </div>
-                </div>
-               
-                
-              </div>
-            </li>
-            <li class="mega-menu dropdown"> <a href="category.html">Electronics</a>
-                  <div class="dropdown-menu">
-                     <div class="column col-lg-2 col-md-3"><a href="category.html">Laptops</a>
-                        <div>
-                          <ul>
-                            <li> <a href="category.html">New Sub Categories </a> </li>
-                            <li> <a href="category.html">New Sub Categories </a> </li>
-                            <li> <a href="category.html">Sub Categories New </a> </li>
-                          </ul>
-                        </div>
-                      </div>
-                      <div class="column col-lg-2 col-md-3"><a href="category.html">Desktops</a>
-                        <div>
-                          <ul>
-                            <li> <a href="category.html">New Sub Categories </a> </li>
-                            <li> <a href="category.html">Sub Categories New </a> </li>
-                            <li> <a href="category.html">Sub Categories New </a> </li>
-                          </ul>
-                        </div>
-                      </div>
-                      <div class="column col-lg-2 col-md-3"><a href="category.html">Cameras</a>
-                        <div>
-                          <ul>
-                            <li> <a href="category.html">New Sub Categories</a></li>
-                          </ul>
-                        </div>
-                      </div>
-                      <div class="column col-lg-2 col-md-3"><a href="category.html">Mobile Phones</a>
-                        <div>
-                          <ul>
-                            <li><a href="category.html">New Sub Categories</a></li>
-                            <li><a href="category.html">New Sub Categories</a></li>
-                          </ul>
-                        </div>
-                      </div>
-                      <div class="column col-lg-2 col-md-3"><a href="category.html">TV &amp; Home Audio</a>
-                        <div>
-                          <ul>
-                            <li><a href="category.html">New Sub Categories </a> </li>
-                            <li><a href="category.html">Sub Categories New </a> </li>
-                          </ul>
-                        </div>
-                      </div>
-                      <div class="column col-lg-2 col-md-3"><a href="category.html">MP3 Players</a> </div>
-                  </div>
-                </li>
-                <li class="dropdown"><a href="category.html">Books</a></li>
-                
-                <li class="dropdown"><a href="category.html">Health &amp; Beauty</a>
-                  <div class="dropdown-menu">
-                    <ul>
-                      <li> <a href="category.html">Perfumes</a></li>
-                      <li> <a href="category.html">Makeup</a></li>
-                      <li> <a href="category.html">Sun Care</a></li>
-                      <li> <a href="category.html">Skin Care</a></li>
-                      <li> <a href="category.html">Eye Care</a></li>
-                      <li> <a href="category.html">Hair Care</a></li>
-                    </ul>
-                  </div>
-                </li>
-                <li class="dropdown"><a href="#">Brands</a>
-                  <div class="dropdown-menu">
-                    <ul>
-                      <li> <a href="category.html">Apple</a></li>
-                      <li> <a href="category.html">Canon</a></li>
-                      <li> <a href="category.html">Hewlett-Packard</a></li>
-                      <li> <a href="category.html">HTC</a></li>
-                      <li> <a href="category.html">Palm</a></li>
-                      <li> <a href="category.html">Sony</a></li>
-                      <li> <a href="category.html">Test</a></li>
-                      <li> <a href="category.html">Test3</a></li>
-                      <li> <a href="category.html">Test4</a></li>
-                    </ul>
-                  </div>
-                </li>
-            <li class="dropdown wrap_custom_block hidden-sm hidden-xs"><a>Custom Block</a>
-              <div class="dropdown-menu custom_block">
-                <ul>
-                  <li>
-                    <table>
-                      <tbody>
-                        <tr>
-                          <td><img alt="" src="image/banner/cms-block.jpg"></td>
-                          <td><img alt="" src="image/banner/responsive.jpg"></td>
-                        </tr>
-                        <tr>
-                          <td><h4>CMS Blocks</h4></td>
-                          <td><h4>Responsive Template</h4></td>
-                        </tr>
-                        <tr>
-                          <td>This is a CMS block. You can insert any content (HTML, Text, Images) Here.</td>
-                          <td>This is a CMS block. You can insert any content (HTML, Text, Images) Here.</td>
-                        </tr>
-                        <tr>
-                          <td><strong><a class="btn btn-default btn-sm" href="#">Read More</a></strong></td>
-                          <td><strong><a class="btn btn-default btn-sm" href="#">Read More</a></strong></td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </li>
-                </ul>
-              </div>
-            </li>
-            <li class="dropdown information-link"><a>Pages</a>
-              <div class="dropdown-menu">
-                <ul>
-                  <li><a href="login.html">Login</a></li>
-                  <li><a href="register.html">Register</a></li>
-                  <li><a href="category.html">Category (Grid/List)</a></li>
-                  <li><a href="product.html">Product</a></li>
-                  <li><a href="cart.html">Shopping Cart</a></li>
-                  <li><a href="checkout.html">Checkout</a></li>
-                  <li><a href="compare.html">Compare</a></li>
-                  <li><a href="wishlist.html">Wishlist</a></li>
-                  <li><a href="search.html">Search</a></li>
-                </ul>
-                <ul>
-                  <li><a href="about-us.html">About Us</a></li>
-                  <li><a href="404.html">404</a></li>
-                  <li><a href="elements.html">Elements</a></li>
-                  <li><a href="faq.html">Faq</a></li>
-                  <li><a href="sitemap.html">Sitemap</a></li>
-                  <li><a href="contact-us.html">Contact Us</a></li>
-                </ul>
-              </div>
-            </li>
+            <li class="mega-menu dropdown"><a href="#">Cara Belanja</a></li>
+            <li class="mega-menu dropdown"><a href="#">Tutorial Hijab</a></li>
+            <li class="mega-menu dropdown"><a href="#">About Us</a></li>
           </ul>
         </div>
-        </div>
-      </nav>
-    
+      </div>
+    </nav>
     <!-- Main Menu End-->
   </div>
   <div id="container">
@@ -471,44 +224,37 @@
       <div class="container">
         <div class="row">
           <div class="contact col-lg-4 col-md-4 col-sm-12 col-xs-12">
-            <h5>About MarketShop</h5>
-            <p>Marketshop is HTML Ecommerce Template. This is a CMS block. You can insert any content (HTML, Text, Images) Here.</p>
-            <img alt="" src="image/logo-small.png">
-          </div>
+            <h5>Tentang Risa Hijab</h5>
+            <p>RisaHijab adalah produk lokal yang menjual berbagai macam jenis kerudung, untuk kebutuhan muslimah yang ingin tampil modis.</p>
+            <img alt="" src="image/logo.png"> </div>
           <div class="column col-lg-2 col-md-2 col-sm-3 col-xs-12">
-            <h5>Information</h5>
+            <h5>Informasi</h5>
             <ul>
-              <li><a href="about-us.html">About Us</a></li>
-              <li><a href="about-us.html">Delivery Information</a></li>
-              <li><a href="about-us.html">Privacy Policy</a></li>
-              <li><a href="about-us.html">Terms &amp; Conditions</a></li>
+              <li><a href="#">Tentang Kami</a></li>
+              <li><a href="#">Privacy Policy</a></li>
+              <li><a href="#">Terms &amp; Conditions</a></li>
             </ul>
           </div>
           <div class="column col-lg-2 col-md-2 col-sm-3 col-xs-12">
             <h5>Customer Service</h5>
             <ul>
-              <li><a href="contact-us.html">Contact Us</a></li>
-              <li><a href="#">Returns</a></li>
-              <li><a href="sitemap.html">Site Map</a></li>
+              <li><a href="#">Hubungi Kami</a></li>
             </ul>
           </div>
           <div class="column col-lg-2 col-md-2 col-sm-3 col-xs-12">
-            <h5>Extras</h5>
+            <h5>Akun</h5>
             <ul>
-              <li><a href="#">Brands</a></li>
-              <li><a href="#">Gift Vouchers</a></li>
-              <li><a href="#">Affiliates</a></li>
-              <li><a href="#">Specials</a></li>
+              <li><a href="login.php">Masuk</a></li>
+              <li><a href="regiter.php">Daftar</a></li>
             </ul>
           </div>
           <div class="column col-lg-2 col-md-2 col-sm-3 col-xs-12">
-            <h5>My Account</h5>
-            <ul>
-              <li><a href="#">My Account</a></li>
-              <li><a href="#">Order History</a></li>
-              <li><a href="#">Wish List</a></li>
-              <li><a href="#">Newsletter</a></li>
-            </ul>
+            <h5>Kontak</h5>
+            <p>
+              Alamat: Jl. Negla Gg. Al Ikhlas No.21, Isola, Sukasari, Kota Bandung<br><br>
+              (022) 85440033
+              info@risa.com
+            </p>
           </div>
         </div>
       </div>
@@ -517,15 +263,9 @@
       <div class="container">
         <div id="powered" class="clearfix">
           <div class="powered_text pull-left flip">
-            <p>Marketshop Ecommerce Template © 2016 | Template By <a href="http://harnishdesign.net" target="_blank">Harnish Design</a></p>
+            <p>Copyright © 2017 Risa Hijab. All rights reserved.</p>
           </div>
           <div class="social pull-right flip"> <a href="#" target="_blank"> <img data-toggle="tooltip" src="image/socialicons/facebook.png" alt="Facebook" title="Facebook"></a> <a href="#" target="_blank"> <img data-toggle="tooltip" src="image/socialicons/twitter.png" alt="Twitter" title="Twitter"> </a> <a href="#" target="_blank"> <img data-toggle="tooltip" src="image/socialicons/google_plus.png" alt="Google+" title="Google+"> </a> <a href="#" target="_blank"> <img data-toggle="tooltip" src="image/socialicons/pinterest.png" alt="Pinterest" title="Pinterest"> </a> <a href="#" target="_blank"> <img data-toggle="tooltip" src="image/socialicons/rss.png" alt="RSS" title="RSS"> </a> </div>
-        </div>
-        <div class="bottom-row">
-          <div class="custom-text text-center">
-            <p>This is a CMS block. You can insert any content (HTML, Text, Images) Here.<br> Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
-          </div>
-          <div class="payments_types"> <a href="#" target="_blank"> <img data-toggle="tooltip" src="image/payment/payment_paypal.png" alt="paypal" title="PayPal"></a> <a href="#" target="_blank"> <img data-toggle="tooltip" src="image/payment/payment_american.png" alt="american-express" title="American Express"></a> <a href="#" target="_blank"> <img data-toggle="tooltip" src="image/payment/payment_2checkout.png" alt="2checkout" title="2checkout"></a> <a href="#" target="_blank"> <img data-toggle="tooltip" src="image/payment/payment_maestro.png" alt="maestro" title="Maestro"></a> <a href="#" target="_blank"> <img data-toggle="tooltip" src="image/payment/payment_discover.png" alt="discover" title="Discover"></a> <a href="#" target="_blank"> <img data-toggle="tooltip" src="image/payment/payment_mastercard.png" alt="mastercard" title="MasterCard"></a> </div>
         </div>
       </div>
     </div>
